@@ -20,7 +20,7 @@ powiązane, ale nie zawierają gotowych rozwiązań ani zadań do wykonania wcze
 | Dataset (id z `docs/datasets.md`) | iranian_churn |
 | Źródło, licencja i cytowanie (DOI) | TODO |
 | Data pobrania danych | TODO |
-| SHA-256 pliku danych (`fingerprint.json`) | TODO |
+| SHA-256 pliku danych (`fingerprint.json`) | 90d5fb6bd1630cd4de4b4d28fcf8b4cb92a8f6ab7484605b0799d47386f7dbe1 |
 | Dane osobowe w zbiorze i sposób postępowania | TODO |
 | Target i klasa pozytywna | TODO |
 | Metryka główna i uzasadnienie | TODO |
