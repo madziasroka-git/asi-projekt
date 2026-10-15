@@ -16,8 +16,8 @@ powiązane, ale nie zawierają gotowych rozwiązań ani zadań do wykonania wcze
 
 | Pole | Wartość |
 |---|---|
-| Zespół i integrator Sprintu 1 | TODO |
-| Dataset (id z `docs/datasets.md`) | TODO |
+| Zespół i integrator Sprintu 1 | s31283, s31257, s30621, s30953 |
+| Dataset (id z `docs/datasets.md`) | iranian_churn |
 | Źródło, licencja i cytowanie (DOI) | TODO |
 | Data pobrania danych | TODO |
 | SHA-256 pliku danych (`fingerprint.json`) | TODO |
