@@ -4,6 +4,12 @@
 **Spotkania:** 17.12 (start Sprintu 5) oraz 07.01 (zamknięcie Sprintu 5 i start Sprintu 6)
 **Deadline:** stan gałęzi `main` na początku zajęć 07.01.2027
 
+## Cel
+
+Zespół łączy Streamlit, FastAPI i PostgreSQL w lokalny system uruchamiany jedną komendą
+przez Docker Compose.
+
+
 ## Ważne: realny czas pracy
 
 Przerwa świąteczna trwa od 24.12.2026 do 06.01.2027 i **nie jest planowanym czasem pracy**.
@@ -463,31 +469,31 @@ To nastąpi w Sprincie 6.
 
 ---
 
-## Co musi być gotowe na koniec Sprintu 5
+## Definition of Done
 
-- [ ] Streamlit zawiera formularz zgodny z kontraktem API.
-- [ ] UI pokazuje etykietę i prawdopodobieństwo klasy pozytywnej.
-- [ ] Adres API jest pobierany z env.
-- [ ] `API_KEY` jest pobierany z env.
-- [ ] Dockerfile UI działa.
-- [ ] Obraz UI nie zawiera niepotrzebnych zależności ML.
-- [ ] `docker-compose.yml` uruchamia `api`, `ui` i `db`.
-- [ ] `db` działa na PostgreSQL.
-- [ ] PostgreSQL korzysta z nazwanego wolumenu.
-- [ ] API ma sterownik PostgreSQL.
-- [ ] API korzysta z PostgreSQL przez istniejącą warstwę repository.
-- [ ] Hasła i tokeny nie są wpisane bezpośrednio do Compose.
-- [ ] `.env.example` jest uzupełniony.
-- [ ] Healthchecki są skonfigurowane.
-- [ ] `docker compose up --build` uruchamia cały system.
-- [ ] Automatyczny smoke przechodzi w trybie `sql`.
-- [ ] Rekord predykcji jest zapisany w PostgreSQL.
-- [ ] Manualny UI check został wykonany.
-- [ ] README zawiera „Docker quickstart”.
-- [ ] ADR-3 jest uzupełniony.
-- [ ] W repozytorium nie ma sekretów.
-- [ ] CI na `main` jest zielone.
-- [ ] Każda osoba w zespole ma własny obszar pracy i zrobiła merytoryczne review pracy innej osoby.
+- Streamlit zawiera formularz zgodny z kontraktem API.
+- UI pokazuje etykietę i prawdopodobieństwo klasy pozytywnej.
+- Adres API jest pobierany z env.
+- `API_KEY` jest pobierany z env.
+- Dockerfile UI działa.
+- Obraz UI nie zawiera niepotrzebnych zależności ML.
+- `docker-compose.yml` uruchamia `api`, `ui` i `db`.
+- `db` działa na PostgreSQL.
+- PostgreSQL korzysta z nazwanego wolumenu.
+- API ma sterownik PostgreSQL.
+- API korzysta z PostgreSQL przez istniejącą warstwę repository.
+- Hasła i tokeny nie są wpisane bezpośrednio do Compose.
+- `.env.example` jest uzupełniony.
+- Healthchecki są skonfigurowane.
+- `docker compose up --build` uruchamia cały system.
+- Automatyczny smoke przechodzi w trybie `sql`.
+- Rekord predykcji jest zapisany w PostgreSQL.
+- Manualny UI check został wykonany.
+- README zawiera „Docker quickstart”.
+- ADR-3 jest uzupełniony.
+- W repozytorium nie ma sekretów.
+- CI na `main` jest zielone.
+- Każda osoba w zespole ma własny obszar pracy i zrobiła merytoryczne review pracy innej osoby.
 
 ---
 
