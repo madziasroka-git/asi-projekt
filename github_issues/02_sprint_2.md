@@ -2,20 +2,31 @@
 
 > Treść generowana z `docs/sprints/SPRINT_2.md` przez `python scripts/build_issues.py`. Zmiany wprowadzaj w pliku sprintu.
 
-**Daty:** 29.10.2026 – 12.11.2026 · **Spotkania:** 29.10 (start sprintu), 05.11 (pełne), 12.11 (zamknięcie sprintu i start Sprintu 3) · **Deadline:** stan gałęzi `main` na początku zajęć 12.11.2026
+**Daty:** 29.10.2026 – 12.11.2026
 
 ## Cel
 
-`kedro run` odtwarza od surowych danych model i metryki, z jawnie rozdzielonymi input
-normalization, training-only filtering i model preprocessing.
+Zespół przenosi proces treningowy z notebooka do Kedro, tak aby cały proces od danych
+do modelu i metryk można było odtworzyć jedną komendą.
 
 ## Definition of Done
 
-- [ ] `kedro run --env ci` przechodzi w CI.
-- [ ] Lokalny `kedro run` na pełnych danych daje model i metryki.
-- [ ] Notebook przestaje być źródłem prawdy: baseline powstaje w pipeline.
-- [ ] ADR-1 jest zmergowany (autor ≠ recenzent).
-- [ ] Pre-flight Sprintu 3 jest wykonany u każdej osoby.
+- [ ] Kedro działa w przypiętej wersji z `requirements/preflight-s2.txt`.
+- [ ] Pipeline `data_processing` wykonuje walidację, input normalization i training-only filtering.
+- [ ] Pipeline `data_science` wykonuje split, trening i ewaluację.
+- [ ] Pipeline korzysta z logiki przygotowanej w Sprincie 1 zamiast ją duplikować.
+- [ ] Model preprocessing nadal znajduje się wewnątrz sklearn `Pipeline`.
+- [ ] Parametry są przeniesione do konfiguracji.
+- [ ] Data Catalog opisuje wejścia i wyjścia pipeline'u.
+- [ ] `conf/ci/` pozwala uruchomić pipeline na próbce CI.
+- [ ] Testy nodów przechodzą.
+- [ ] `kedro run` na pełnych danych tworzy model i metryki.
+- [ ] `kedro run --env ci` działa w CI.
+- [ ] Notebook nie jest już wymagany do trenowania baseline'u.
+- [ ] ADR-1 jest napisany i zmergowany.
+- [ ] README zawiera sekcję „Kedro quickstart”.
+- [ ] CI na `main` jest zielone.
+- [ ] Każda osoba w zespole ma własny obszar pracy i zrobiła merytoryczne review pracy innej osoby.
 
 ## Podział pracy (uzupełnia zespół na początku sprintu)
 
