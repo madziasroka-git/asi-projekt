@@ -23,7 +23,7 @@ powiązane, ale nie zawierają gotowych rozwiązań ani zadań do wykonania wcze
 | SHA-256 pliku danych (`fingerprint.json`) | 90d5fb6bd1630cd4de4b4d28fcf8b4cb92a8f6ab7484605b0799d47386f7dbe1 |
 | Dane osobowe w zbiorze i sposób postępowania | TODO |
 | Target i klasa pozytywna | TODO |
-| Metryka główna i uzasadnienie | TODO |
+| Metryka główna i uzasadnienie | recall, ponieważ przy mocno niezbalansowanym zbiorze koszt biznesowy przeoczenia klienta odchodzącego jest znacznie wyższy nież fałszywy alarm |
 | Użytkownik systemu i decyzja, którą wspiera model | TODO |
 <!-- KARTA-PROJEKTU:END -->
 
