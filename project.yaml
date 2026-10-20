@@ -5,9 +5,10 @@
 dataset: iranian_churn
 
 # TODO (S1): typy cech po EDA. Wyłącznie kolumny z ALLOWED FEATURES wybranego datasetu.
+# Pominięto Age, ponieważ przekazuje tę samą informację co Age Group.
 features:
   numeric: ["Call Failure", "Subscription Length", "Seconds of Use", "Frequency of use", "Frequency of SMS", "Distinct Called Numbers"]
-  categorical: ["Complains", "Tariff Plan", "Status", "Age Group", "Charge Amount", "Age"]
+  categorical: ["Complains", "Tariff Plan", "Status", "Age Group", "Charge Amount"]
 
 split:
   test_size: 0.2

@@ -184,8 +184,9 @@ def normalize_input(df: pd.DataFrame) -> pd.DataFrame:
 
     Domyślnie przycina białe znaki w wartościach tekstowych i zamienia puste napisy na brak.
 
-    TODO (S1): po EDA dopisz reguły dla swojego datasetu, np. oczywiste reprezentacje braków
-    albo konwersję typów. Każdą regułę uzasadnij w notebooku 01.
+    Dla iranian_churn nie dodano dodatkowych reguł normalizacji:
+    kolumny są liczbowe i nie stwierdzono reprezentacji braków
+    wymagających zamiany. Zachowano domyślną obsługę tekstu.
     """
     normalized = df.copy()
     for column in normalized.columns:
@@ -200,8 +201,9 @@ def filter_training_rows(df: pd.DataFrame, contract: DatasetContract) -> pd.Data
     Domyślnie usuwa rekordy bez targetu (nie da się na nich uczyć ani oceniać modelu).
     Funkcja może tylko usuwać rekordy; nie dodaje ich i nie zmienia wartości.
 
-    TODO (S1): po EDA zdecyduj, czy potrzebne są inne reguły (np. dokładne duplikaty).
-    Decyzję i jej powód zapisz w notebooku 01.
+    Dla iranian_churn usuwa dokładne duplikaty całych wierszy,
+    zachowując pierwsze wystąpienie, zgodnie z decyzją zapisaną
+    w notebooks/01_eda.ipynb, sekcja 7.
     """
     keep = df[contract.target].map(label_text).notna()
     keep &= ~df.duplicated(keep="first")  # usuwa dokładne duplikaty
