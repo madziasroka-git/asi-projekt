@@ -5,7 +5,6 @@ wewnątrz sklearn Pipeline. Dzięki temu przy predykcji wykonują się dokładni
 które zostały dopasowane na X_train, a cały model można zapisać jako jeden artefakt.
 """
 
-
 from collections.abc import Sequence
 
 from sklearn.compose import ColumnTransformer
@@ -16,11 +15,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
-
 def make_dummy() -> DummyClassifier:
     """Baseline bez wiedzy o cechach: zawsze przewiduje najczęstszą klasę z X_train."""
     return DummyClassifier(strategy="most_frequent")
-
 
 
 def build_baseline_pipeline(
