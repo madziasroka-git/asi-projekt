@@ -18,13 +18,13 @@ powiązane, ale nie zawierają gotowych rozwiązań ani zadań do wykonania wcze
 |---|---|
 | Zespół i integrator Sprintu 1 | s31283, s31257, s30621, s30953 |
 | Dataset (id z `docs/datasets.md`) | iranian_churn |
-| Źródło, licencja i cytowanie (DOI) | TODO |
-| Data pobrania danych | TODO |
+| Źródło, licencja i cytowanie (DOI) | UCI Machine Learning Repository, https://archive.ics.uci.edu/dataset/563/iranian+churn+dataset (udostępniony 8.04.2020). Licencja: CC BY 4.0. Cytowanie: *Iranian Churn* [Dataset]. (2020). UCI Machine Learning Repository. https://doi.org/10.24432/C5JW3Z |
+| Data pobrania danych | 2026-10-15 |
 | SHA-256 pliku danych (`fingerprint.json`) | 90d5fb6bd1630cd4de4b4d28fcf8b4cb92a8f6ab7484605b0799d47386f7dbe1 |
-| Dane osobowe w zbiorze i sposób postępowania | TODO |
-| Target i klasa pozytywna | TODO |
+| Dane osobowe w zbiorze i sposób postępowania | Brak bezpośrednich danych osobowych: zbiór jest zanonimizowany (bez ID, nazwisk, numerów telefonów). Wiek używamy tylko jako przedział (`Age Group`), pełne dane trzymamy poza repozytorium.  |
+| Target i klasa pozytywna | Churn, klasa pozytywna '1' = klient odszedł (stan na koniec 12. miesiąca). Udział klasy pozytywnej: 495/3150 = 15,71%. |
 | Metryka główna i uzasadnienie | recall, ponieważ przy mocno niezbalansowanym zbiorze koszt biznesowy przeoczenia klienta odchodzącego jest znacznie wyższy nież fałszywy alarm |
-| Użytkownik systemu i decyzja, którą wspiera model | TODO |
+| Użytkownik systemu i decyzja, którą wspiera model | Dział obsługi klienta operatora telekomunikacyjnego. Na koniec 9. miesiąca model wskazuje klientów z wysokim prawdopodobieństwem odejścia w ciągu kolejnych 3 miesięcy. Zespół decyduje, do kogo skierować działania retencyjne (kontakt, rabat, zmianę taryfy). |
 <!-- KARTA-PROJEKTU:END -->
 
 ## Mapa projektu
