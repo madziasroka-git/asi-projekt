@@ -48,10 +48,25 @@ gotowy — sprawdza to `python scripts/check_dod.py`.
 <!-- DIAGRAM-V0:START -->
 ```mermaid
 flowchart LR
-    data["TODO: źródło danych"] --> model["TODO: kolejne elementy systemu"]
+    csv["Dane CSV<br/>Sprint 1 - jest"] --> data["data.py<br/>Sprint 1 - jest"]
+    data --> modelpy["model.py<br/>Sprint 1 - jest"]
+    modelpy --> kedro["Kedro<br/>Sprint 2"]
+    kedro --> model["Model<br/>Sprint 3"]
+    model --> api["API<br/>Sprint 4"]
+    api --> ui["UI<br/>Sprint 5"]
+    api --> db[("Baza danych<br/>Sprint 4/5")]
+    api --> cloud
+    ui --> cloud(("Cloud Run<br/>Sprint 6"))
 ```
 
-TODO: krótki opis diagramu (3–5 zdań).
+Dane wejściowe pochodzą z pliku CSV (`data/01_raw/`), a kontrakt danych żyje w
+`src/asi_project/datasets.yaml` i jest egzekwowany w `data.py`, gdzie odbywa się input
+normalization oraz training-only filtering. `model.py` zawiera model preprocessing i baseline
+— te trzy elementy istnieją już po Sprincie 1. W Sprincie 2 przetwarzanie i trening zostaną
+opakowane w odtwarzalny pipeline Kedro, a w Sprincie 3 powstanie wybrany artefakt modelu,
+który API (Sprint 4) wczyta raz przy starcie. UI (Sprint 5) wysyła żądania predykcji do API
+i dostaje w odpowiedzi wynik predykcji, a API zapisuje predykcje w bazie danych (Sprint 4/5).
+Na koniec API i UI zostaną wdrożone na Cloud Run (Sprint 6).
 <!-- DIAGRAM-V0:END -->
 
 ## Historia zmian architektury
