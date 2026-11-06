@@ -1,10 +1,9 @@
-
 from kedro.pipeline import Pipeline, node
 
 from .nodes import (
+    evaluate_model,
     prepare_train_test,
     train_model,
-    evaluate_model,
 )
 
 

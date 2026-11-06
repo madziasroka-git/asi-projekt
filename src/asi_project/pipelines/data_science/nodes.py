@@ -1,18 +1,16 @@
+from typing import Any
 
 import pandas as pd
+from sklearn.pipeline import Pipeline
 
 from asi_project.config import DatasetContract, ProjectConfig
 from asi_project.data import make_xy, split_train_test
-from sklearn.pipeline import Pipeline
-from asi_project.model import build_baseline_pipeline
-from typing import Any
-
-from asi_project.model import make_dummy
 from asi_project.metrics import (
-    compute_metrics,
     build_metrics_record,
+    compute_metrics,
     validate_metrics_record,
 )
+from asi_project.model import build_baseline_pipeline, make_dummy
 
 
 def prepare_train_test(
@@ -73,9 +71,7 @@ def evaluate_model(
     # Obliczenie metryk obu modeli
     results = {
         "dummy": compute_metrics(y_test, dummy_predictions),
-        "logistic_regression": compute_metrics(
-            y_test, model_predictions
-        ),
+        "logistic_regression": compute_metrics(y_test, model_predictions),
     }
 
     # Przygotowanie rekordu metryk
