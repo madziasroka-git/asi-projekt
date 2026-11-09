@@ -11,6 +11,12 @@ requires-python = ">=3.11,<3.12"
 # Zależności zarządza environment.yml (conda); pakiet instalujemy: pip install --no-deps -e .
 dependencies = []
 
+[tool.kedro]
+package_name = "asi_project"
+project_name = "asi-project"
+kedro_init_version = "1.7.0"
+source_dir = "src"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
@@ -32,3 +38,6 @@ select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["asi_project"]
+
+[tool.kedro_telemetry]
+project_id = "391708aad3444cb2aa57678f305c7326"
