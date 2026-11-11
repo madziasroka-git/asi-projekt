@@ -88,6 +88,45 @@ Najważniejsze pliki Sprintu 1:
 | `docs/architecture.md` | zespół | diagram v0 systemu docelowego |
 | `src/asi_project/datasets.yaml` | prowadząca | kontrakt datasetów — nie edytujemy |
 
+## Kedro quickstart
+
+Polecenia uruchamiaj z głównego katalogu sklonowanego repozytorium.
+
+### Pierwsza konfiguracja
+
+Jeśli nie masz środowiska `asi-ml`, utwórz je poleceniem
+`conda env create -f environment.yml`. Jeśli masz środowisko z onboardingu
+i wymaga aktualizacji, użyj `conda env update -n asi-ml -f environment.yml --prune`.
+
+W aktywnym środowisku zainstaluj projekt i zależności Kedro:
+
+```bash
+conda activate asi-ml
+python -m pip install --no-deps -e .
+python -m pip install -r requirements/preflight-s2.txt -c constraints.txt
+python -m pip install kedro-datasets==10.0.0 -c constraints.txt
+```
+
+### Uruchomienie
+
+Jeśli nie masz pełnego zbioru Iranian Churn, pobierz go poleceniem
+`python scripts/download_data.py`. Następnie w środowisku `asi-ml` uruchom:
+
+```bash
+kedro run
+```
+
+Aby uruchomić pipeline na próbce z repozytorium bez pobierania pełnych
+danych, użyj `kedro run --env ci`.
+
+Wyniki obu trybów trafiają do tych samych plików:
+
+- `data/02_intermediate/processed_data.csv` — dane po przygotowaniu,
+- `data/06_models/model.pkl` — wytrenowany model z przetwarzaniem cech,
+- `data/08_reporting/metrics.json` — metryki.
+
+Kolejne uruchomienie zastępuje poprzednie wyniki.
+
 ## Gałęzie, Pull Requesty i review
 
 - Gałąź `main` jest chroniona. Każda zmiana trafia przez gałąź i Pull Request.
