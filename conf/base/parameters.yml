@@ -3,3 +3,18 @@ data_mode: full
 split:
   test_size: 0.2
   random_state: 42
+
+run_autogluon: true
+
+autogluon:
+  time_limit_seconds: 120
+  num_cpus: 2
+  variants:
+    lightgbm:
+      GBM:
+        learning_rate: 0.05
+        num_leaves: 31
+    catboost:
+      CAT:
+        learning_rate: 0.05
+        depth: 6

@@ -1,5 +1,6 @@
 from kedro.pipeline import Pipeline, node
 
+from .experiments import run_autogluon, track_baseline
 from .nodes import (
     evaluate_model,
     prepare_train_test,
@@ -51,6 +52,35 @@ def create_pipeline() -> Pipeline:
                 ],
                 outputs="metrics",
                 name="evaluate_model_node",
+            ),
+        ]
+    )
+
+
+def create_experiment_pipeline() -> Pipeline:
+    """Rozszerza trening i ewaluację o run bazowy oraz warianty AutoGluona."""
+    return Pipeline(
+        [
+            node(
+                func=track_baseline,
+                inputs=["trained_model", "metrics", "dataset_contract", "project_config"],
+                outputs="baseline_experiment",
+                name="track_baseline_node",
+            ),
+            node(
+                func=run_autogluon,
+                inputs=[
+                    "baseline_experiment",
+                    "X_train",
+                    "X_test",
+                    "y_train",
+                    "y_test",
+                    "project_config",
+                    "params:run_autogluon",
+                    "params:autogluon",
+                ],
+                outputs="sprint3_results",
+                name="run_autogluon_node",
             ),
         ]
     )

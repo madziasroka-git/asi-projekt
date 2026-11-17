@@ -4,6 +4,7 @@ from kedro.pipeline import Pipeline, node
 
 from asi_project.config import get_contract, load_project_config
 from asi_project.pipelines.data_processing.pipeline import create_pipeline as data_processing
+from asi_project.pipelines.data_science.pipeline import create_experiment_pipeline
 from asi_project.pipelines.data_science.pipeline import create_pipeline as data_science
 
 
@@ -22,8 +23,12 @@ def register_pipelines():
             node(get_contract, "project_config", "dataset_contract"),
         ]
     )
+    processing = data_processing()
+    science = data_science()
+    training = config + processing + science
     return {
-        "data_processing": config + data_processing(),
-        "data_science": config + data_science(),
-        "__default__": config + data_processing() + data_science(),
+        "data_processing": config + processing,
+        "data_science": config + science,
+        "experiments": training + create_experiment_pipeline(),
+        "__default__": training,
     }
