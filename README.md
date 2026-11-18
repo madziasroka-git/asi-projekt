@@ -127,6 +127,41 @@ Wyniki obu trybów trafiają do tych samych plików:
 
 Kolejne uruchomienie zastępuje poprzednie wyniki.
 
+## Sprint 3 — eksperymenty i W&B
+
+Po wykonaniu „Kedro quickstart” zainstaluj zależności eksperymentów i sprawdź mini-trening.
+Jeśli brakuje pełnego zbioru, uruchom także `python scripts/download_data.py`.
+
+```bat
+python -m pip install -r requirements/preflight-s3.txt -c constraints.txt
+python scripts/check_env.py --autogluon
+```
+
+W Miniforge Prompt zaloguj się i podstaw zespół oraz projekt z adresu wspólnego projektu W&B.
+
+```bat
+python -m wandb login
+set "WANDB_ENTITY=nazwa-zespolu"
+set "WANDB_PROJECT=nazwa-projektu"
+set "WANDB_MODE=online"
+python -m kedro run --pipelines experiments
+```
+
+Pipeline loguje najpierw regresję logistyczną ze Sprintu 2, a potem LightGBM i CatBoost.
+Wszystkie trzy modele są oceniane na tym samym zbiorze testowym. AutoGluon korzysta
+z danych treningowych i wewnętrznej walidacji, a każdy wariant ma limit 120 sekund na trening.
+Konfiguracje są w `conf/base/parameters.yml`. Główna metryka projektu to `recall` dla klasy churn.
+
+Raport `data/08_reporting/sprint3_results.json` zawiera metryki, parametry, Git SHA, SHA-256
+pliku danych, ścieżki do modeli i identyfikatory runów W&B, jeśli tracking był włączony.
+Pole `git_dirty` informuje, czy przebieg korzystał z lokalnych zmian po ostatnim commicie.
+Predyktory AutoGluona są w osobnym katalogu dla każdej grupy eksperymentów. Do ich predykcji
+ustaw kolumny z `categorical_features` w raporcie na typ pandas `category`, jak przy treningu.
+
+Domyślnie `WANDB_MODE` ma wartość `disabled`. Ustaw `offline`, by zapisać lokalne runy w
+`data/08_reporting/wandb/`. Opcja `--env ci` wybiera próbkę i wyłącza AutoGluona.
+Raport i `data/06_models/model.pkl` są nadpisywane przez kolejne uruchomienia.
+
 ## Gałęzie, Pull Requesty i review
 
 - Gałąź `main` jest chroniona. Każda zmiana trafia przez gałąź i Pull Request.
