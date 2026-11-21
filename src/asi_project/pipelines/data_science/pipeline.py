@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node
 
-from .experiments import run_autogluon, track_baseline
+from .experiments import package_production_model, run_autogluon, track_baseline
 from .nodes import (
     evaluate_model,
     prepare_train_test,
@@ -81,6 +81,18 @@ def create_experiment_pipeline() -> Pipeline:
                 ],
                 outputs="sprint3_results",
                 name="run_autogluon_node",
+            ),
+            node(
+                func=package_production_model,
+                inputs=[
+                    "sprint3_results",
+                    "trained_model",
+                    "dataset_contract",
+                    "project_config",
+                    "params:production",
+                ],
+                outputs="production_metadata",
+                name="package_production_model_node",
             ),
         ]
     )

@@ -7,6 +7,8 @@ import pytest
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
+from asi_project.model_package import load_model_package, predict
+from asi_project.pipelines.data_science.experiments import package_production_model
 from asi_project.pipelines.data_science.nodes import (
     evaluate_model,
     prepare_train_test,
@@ -123,3 +125,58 @@ def test_evaluate_model_returns_metrics_dict(dummy_data, monkeypatch):
 
     assert isinstance(result, dict)
     assert result == expected_metrics
+
+
+@pytest.fixture
+def experiment_results():
+    return {
+        "context": {
+            "experiment_id": "abc",
+            "dataset": "toy",
+            "data_mode": "sample",
+            "data_fingerprint": "f" * 64,
+            "git_sha": "0" * 40,
+            "git_dirty": False,
+            "split": {"strategy": "stratified_random"},
+            "numeric_features": ["feature1", "feature2"],
+            "categorical_features": [],
+        },
+        "runs": [
+            {
+                "name": "logistic_regression",
+                "parameters": {"C": 1.0},
+                "metrics": {"recall": 0.8},
+                "model_path": "data/06_models/model.pkl",
+            },
+            {
+                "name": "autogluon_catboost",
+                "parameters": {},
+                "metrics": {"recall": 0.9, "fit_seconds": 1.0},
+                "model_path": "data/06_models/autogluon/abc/catboost",
+            },
+        ],
+    }
+
+
+def test_package_production_model_saves_loadable_package(dummy_data, experiment_results, tmp_path):
+    X = dummy_data[["feature1", "feature2"]]
+    model = Pipeline([("classifier", LogisticRegression())]).fit(X, dummy_data["label"])
+    contract = MagicMock(target="label", positive_class="1")
+    config = MagicMock(root=tmp_path)
+    settings = {"model": "logistic_regression", "package_path": "production"}
+
+    metadata = package_production_model(experiment_results, model, contract, config, settings)
+
+    package = load_model_package(tmp_path / "production")
+    assert metadata["model_name"] == "logistic_regression"
+    assert package.metadata["git_sha"] == "0" * 40
+    assert package.metadata["experiment_id"] == "abc"
+    assert len(predict(package, X.head(5))) == 5
+
+
+def test_package_production_model_rejects_unknown_run(experiment_results, tmp_path):
+    config = MagicMock(root=tmp_path)
+    settings = {"model": "autogluon_xgboost", "package_path": "production"}
+
+    with pytest.raises(ValueError, match="autogluon_xgboost"):
+        package_production_model(experiment_results, MagicMock(), MagicMock(), config, settings)

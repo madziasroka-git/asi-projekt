@@ -15,6 +15,7 @@ from asi_project.config import DatasetContract, ProjectConfig
 from asi_project.data import raw_data_path
 from asi_project.download import sha256_hex
 from asi_project.metrics import compute_metrics
+from asi_project.model_package import build_metadata, save_model_package
 
 
 def _log_run(context: dict[str, Any], result: dict[str, Any], root: Path, job_type: str) -> None:
@@ -153,3 +154,47 @@ def run_autogluon(
         _log_run(context, result, config.root, "autogluon")
         runs.append(result)
     return {"context": context, "runs": runs}
+
+
+def _load_run_model(run: dict[str, Any], trained_model: Pipeline, root: Path) -> tuple[Any, str]:
+    if run["name"] == "logistic_regression":
+        return trained_model, "sklearn"
+    from autogluon.tabular import TabularPredictor
+
+    return TabularPredictor.load(str(root / run["model_path"]), verbosity=0), "autogluon"
+
+
+def package_production_model(
+    sprint3_results: dict[str, Any],
+    trained_model: Pipeline,
+    contract: DatasetContract,
+    config: ProjectConfig,
+    settings: dict[str, Any],
+) -> dict[str, Any]:
+    """Zapisuje wybrany run jako pakiet modelu i zwraca jego metadane."""
+    runs = {run["name"]: run for run in sprint3_results["runs"]}
+    name = settings["model"]
+    if name not in runs:
+        raise ValueError(f"Brak runu {name!r} w wynikach eksperymentów; dostępne: {sorted(runs)}.")
+    run = runs[name]
+    context = sprint3_results["context"]
+    model, framework = _load_run_model(run, trained_model, config.root)
+    metadata = build_metadata(
+        model_name=name,
+        framework=framework,
+        numeric_features=context["numeric_features"],
+        categorical_features=context["categorical_features"],
+        target=contract.target,
+        positive_class=contract.positive_class,
+        metrics={key: value for key, value in run["metrics"].items() if key != "fit_seconds"},
+        git_sha=context["git_sha"],
+        data_fingerprint=context["data_fingerprint"],
+        git_dirty=context["git_dirty"],
+        dataset=context["dataset"],
+        data_mode=context["data_mode"],
+        split=context["split"],
+        experiment_id=context["experiment_id"],
+        parameters=run["parameters"],
+    )
+    save_model_package(model, metadata, config.root / settings["package_path"])
+    return metadata
