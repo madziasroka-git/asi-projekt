@@ -18,3 +18,8 @@ autogluon:
       CAT:
         learning_rate: 0.05
         depth: 6
+
+production:
+  model: autogluon_catboost
+  package_path: data/06_models/production
+  artifact_name: iranian-churn-model

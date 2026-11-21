@@ -16,6 +16,23 @@ LightGBM wykonywał predykcję szybciej, zajmował mniej miejsca na dysku
 i wymagał mniejszego przyrostu RAM-u po wczytaniu. Regresja logistyczna
 miała najmniejszy artefakt i najkrótszy czas predykcji.
 
+## Wybór modelu produkcyjnego
+
+Model produkcyjny to **AutoGluon CatBoost** (`production.model: autogluon_catboost`
+w `conf/base/parameters.yml`).
+
+- Ma najwyższy recall: 86,52% wobec 75,28% dla LightGBM i 47,19% dla regresji
+  logistycznej. Wykrywa 10 odchodzących klientów więcej niż LightGBM na tym samym
+  zbiorze testowym, przy podobnej liczbie fałszywych alarmów (8 wobec 9).
+- Koszty działania są akceptowalne dla systemu, który wskazuje klientów do działań
+  retencyjnych: mediana predykcji jednego rekordu to ok. 4 ms, artefakt ma ok. 0,8 MB,
+  a wczytanie modelu zwiększa RAM o ok. 25 MiB.
+- Przewaga LightGBM w szybkości, rozmiarze i pamięci jest za mała, by zrekompensować
+  niższy recall, który jest główną metryką projektu.
+
+Pakiet modelu budowany jest w pipeline `experiments` i publikowany w W&B jako
+artefakt `iranian-churn-model` z aliasem `production`.
+
 ## Metoda pomiaru
 
 - **Recall** pochodzi z lokalnego raportu `data/08_reporting/sprint3_results.json`.
