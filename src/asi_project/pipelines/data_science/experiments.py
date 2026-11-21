@@ -17,11 +17,13 @@ from asi_project.download import sha256_hex
 from asi_project.metrics import compute_metrics
 from asi_project.model_package import build_metadata, save_model_package
 
+PRODUCTION_ALIAS = "production"
 
-def _log_run(context: dict[str, Any], result: dict[str, Any], root: Path, job_type: str) -> None:
+
+def _wandb_target() -> tuple[str, str | None, str] | None:
     mode = os.environ.get("WANDB_MODE", "disabled")
     if mode == "disabled":
-        return
+        return None
     if mode not in {"offline", "online"}:
         raise ValueError("WANDB_MODE musi mieć wartość disabled, offline albo online.")
 
@@ -29,25 +31,39 @@ def _log_run(context: dict[str, Any], result: dict[str, Any], root: Path, job_ty
     project = os.environ.get("WANDB_PROJECT")
     if mode == "online" and not (entity and project):
         raise ValueError("Ustaw WANDB_ENTITY i WANDB_PROJECT na dane projektu zespołu.")
+    return mode, entity, project or "asi-project"
 
+
+def _wandb_init(root: Path, **kwargs: Any):
     import wandb
 
+    mode, entity, project = _wandb_target()
     reporting_dir = root / "data/08_reporting"
     reporting_dir.mkdir(parents=True, exist_ok=True)
-    with wandb.init(
+    return wandb.init(
         entity=entity,
-        project=project or "asi-project",
+        project=project,
         mode=mode,
         dir=str(reporting_dir),
+        settings=wandb.Settings(disable_git=True, save_code=False, console="off"),
+        **kwargs,
+    )
+
+
+def _log_run(context: dict[str, Any], result: dict[str, Any], root: Path, job_type: str) -> None:
+    if _wandb_target() is None:
+        return
+
+    with _wandb_init(
+        root,
         name=result["name"],
         group=context["experiment_id"],
         job_type=job_type,
         config={**context, "parameters": result["parameters"]},
-        settings=wandb.Settings(disable_git=True, save_code=False, console="off"),
     ) as run:
         run.log(result["metrics"])
         result["wandb_run_id"] = run.id
-        if mode == "online":
+        if _wandb_target()[0] == "online":
             result["wandb_url"] = run.url
 
 
@@ -196,5 +212,35 @@ def package_production_model(
         experiment_id=context["experiment_id"],
         parameters=run["parameters"],
     )
-    save_model_package(model, metadata, config.root / settings["package_path"])
-    return metadata
+    path = save_model_package(model, metadata, config.root / settings["package_path"])
+    artifact = publish_model_package(path, metadata, settings["artifact_name"], config.root)
+    return {**metadata, "wandb_artifact": artifact} if artifact else metadata
+
+
+def publish_model_package(
+    path: Path,
+    metadata: dict[str, Any],
+    artifact_name: str,
+    root: Path,
+) -> str | None:
+    """Zapisuje pakiet w W&B jako Artifact z aliasem ``production``; zwraca jego nazwę."""
+    target = _wandb_target()
+    if target is None:
+        return None
+
+    import wandb
+
+    with _wandb_init(
+        root,
+        name=f"package_{metadata['model_name']}",
+        group=metadata["experiment_id"],
+        job_type="package",
+        config=metadata,
+    ) as run:
+        artifact = wandb.Artifact(artifact_name, type="model", metadata=metadata)
+        artifact.add_dir(str(path))
+        run.log_artifact(artifact, aliases=[PRODUCTION_ALIAS])
+        if target[0] == "online":
+            artifact.wait()
+            return f"{artifact.entity}/{artifact.project}/{artifact.name}"
+    return f"{artifact_name}:{PRODUCTION_ALIAS}"

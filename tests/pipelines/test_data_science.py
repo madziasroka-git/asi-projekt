@@ -1,5 +1,6 @@
 """Testy nodów data science."""
 
+import sys
 from unittest.mock import MagicMock
 
 import pandas as pd
@@ -8,7 +9,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
 from asi_project.model_package import load_model_package, predict
-from asi_project.pipelines.data_science.experiments import package_production_model
+from asi_project.pipelines.data_science.experiments import (
+    package_production_model,
+    publish_model_package,
+)
 from asi_project.pipelines.data_science.nodes import (
     evaluate_model,
     prepare_train_test,
@@ -158,12 +162,19 @@ def experiment_results():
     }
 
 
-def test_package_production_model_saves_loadable_package(dummy_data, experiment_results, tmp_path):
+def test_package_production_model_saves_loadable_package(
+    dummy_data, experiment_results, tmp_path, monkeypatch
+):
     X = dummy_data[["feature1", "feature2"]]
     model = Pipeline([("classifier", LogisticRegression())]).fit(X, dummy_data["label"])
+    monkeypatch.setenv("WANDB_MODE", "disabled")
     contract = MagicMock(target="label", positive_class="1")
     config = MagicMock(root=tmp_path)
-    settings = {"model": "logistic_regression", "package_path": "production"}
+    settings = {
+        "model": "logistic_regression",
+        "package_path": "production",
+        "artifact_name": "model",
+    }
 
     metadata = package_production_model(experiment_results, model, contract, config, settings)
 
@@ -180,3 +191,27 @@ def test_package_production_model_rejects_unknown_run(experiment_results, tmp_pa
 
     with pytest.raises(ValueError, match="autogluon_xgboost"):
         package_production_model(experiment_results, MagicMock(), MagicMock(), config, settings)
+
+
+def test_publish_model_package_skipped_when_wandb_disabled(monkeypatch, tmp_path):
+    monkeypatch.setenv("WANDB_MODE", "disabled")
+
+    assert publish_model_package(tmp_path, {}, "model", tmp_path) is None
+
+
+def test_publish_model_package_logs_artifact_with_production_alias(monkeypatch, tmp_path):
+    fake_wandb = MagicMock()
+    run = fake_wandb.init.return_value.__enter__.return_value
+    monkeypatch.setitem(sys.modules, "wandb", fake_wandb)
+    monkeypatch.setenv("WANDB_MODE", "offline")
+    metadata = {"model_name": "autogluon_catboost", "experiment_id": "abc"}
+
+    name = publish_model_package(tmp_path, metadata, "iranian-churn-model", tmp_path)
+
+    fake_wandb.Artifact.assert_called_once_with(
+        "iranian-churn-model", type="model", metadata=metadata
+    )
+    artifact = fake_wandb.Artifact.return_value
+    artifact.add_dir.assert_called_once_with(str(tmp_path))
+    run.log_artifact.assert_called_once_with(artifact, aliases=["production"])
+    assert name == "iranian-churn-model:production"
