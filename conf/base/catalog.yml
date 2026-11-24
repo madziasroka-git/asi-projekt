@@ -23,3 +23,9 @@ sprint3_results:
   filepath: data/08_reporting/sprint3_results.json
   save_args:
     indent: 2
+
+production_metadata:
+  type: json.JSONDataset
+  filepath: data/08_reporting/production_metadata.json
+  save_args:
+    indent: 2

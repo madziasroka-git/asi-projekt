@@ -1,2 +1,7 @@
 data_mode: sample
 run_autogluon: false
+
+production:
+  model: logistic_regression
+  package_path: data/06_models/production
+  artifact_name: iranian-churn-model
