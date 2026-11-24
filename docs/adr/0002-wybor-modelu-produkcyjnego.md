@@ -3,7 +3,7 @@
 - **Status:** proponowany
 - **Sprint:** S3
 - **Autor:** Magdalena Sroka
-- **Recenzent:** imię i nazwisko
+- **Recenzent:** Jan Bagiński
 
 ## Kontekst
 
