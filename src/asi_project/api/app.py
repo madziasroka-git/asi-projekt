@@ -3,15 +3,16 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 from fastapi import FastAPI
 
-from asi_project.api.schemas import PredictRequest, PredictResponse
+from asi_project.api.schemas import HealthResponse, PredictRequest, PredictResponse
 from asi_project.model_package import load_model_package, predict
 
 
-def create_app(model_path: Path) -> FastAPI:
+def create_app(model_path: Path, persistence: Literal["sql", "disabled"]) -> FastAPI:
     """Tworzy aplikację korzystającą ze wskazanego pakietu modelu."""
 
     @asynccontextmanager
@@ -23,6 +24,17 @@ def create_app(model_path: Path) -> FastAPI:
             del app.state.model_package
 
     app = FastAPI(title="Iranian Churn API", lifespan=lifespan)
+
+    @app.get("/healthz", response_model=HealthResponse)
+    def healthz() -> HealthResponse:
+        """Zwraca status usługi, wersję modelu i tryb persistence."""
+        metadata = app.state.model_package.metadata
+        run_id = metadata.get("experiment_id", metadata["git_sha"])
+
+        return HealthResponse(
+            model_version=f"{metadata['model_name']}:{run_id}",
+            persistence=persistence,
+        )
 
     @app.post("/predict", response_model=PredictResponse)
     def predict_endpoint(body: PredictRequest) -> PredictResponse:
