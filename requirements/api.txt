@@ -1,0 +1,2 @@
+# Zależności API — Sprint 4.
+pydantic==2.14.4
